@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chat_window_popup</title>
+    <link rel="stylesheet"href="style.css">
+</head>
+<body>
+    <div class="chat-container">
+        <!-- chat Header -->
+        <header class="chat-header">
+            <div class="profile">
+                <div>
+                    <h3>Rahul</h3>
+                    <span>Online</span>
+                </div>
+            </div>
+            <button class="menu-btn">⋮</button>
+
+        </header>
+     <!-- Message-->
+      <main class="messages"id="messages">
+
+        <div class="message recieved">
+            <p>Hello, how are you?</p>
+            <span>10:30 AM</span>
+        </div>
+        <div class="message sent">
+            <p>I'm good, thanks! How about you?</p>
+            <span>10:31 AM</span>
+        </div>
+        <div class="message received">
+             <p>I'm doing great. Are you working on the assignment?</p>
+              <span>10:32 AM</span>
+             </div>
+              <div class="message sent">
+                 <p>Yes! I'm building a chat window.</p> 
+                 <span>10:33 AM</span> 
+                </div>
+                 <div class="message received"> 
+                    <p>Nice! Good luck 👍</p> 
+                    <span>10:34 AM</span>
+                 </div>
+
+      </main>
+      <!-- message input -->
+       <form class="message-form" id="messageForm">
+        <input
+        type="text"
+        id="messageInput"
+        placeholder="Type a message..."
+        autocomplete="off"
+        >
+        <button type="submit"id="sendBtn">➤</button>
+       </form>
+
+    </div>
+    <script src="
+https://cdn.jsdelivr.net/npm/axios@1.18.0/dist/axios.min.js
+"></script>
+    <script src="chatwindow.js"></script>
+    
+</body>
+</html>

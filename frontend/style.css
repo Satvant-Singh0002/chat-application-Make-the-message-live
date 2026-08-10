@@ -1,0 +1,247 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  }
+
+body {
+font-family: Arial, sans-serif;
+background: #e9edef;
+
+
+height: 100vh;
+
+display: flex;
+justify-content: center;
+align-items: center;
+
+
+}
+
+/* Main Chat Window */
+
+.chat-container {
+width: 420px;
+height: 650px;
+
+
+background: white;
+
+display: flex;
+flex-direction: column;
+
+border-radius: 12px;
+overflow: hidden;
+
+box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+
+
+}
+
+/* Header */
+
+.chat-header {
+height: 70px;
+
+
+background: #075e54;
+color: white;
+
+display: flex;
+align-items: center;
+justify-content: space-between;
+
+padding: 0 18px;
+
+
+}
+
+.profile {
+display: flex;
+align-items: center;
+gap: 12px;
+}
+
+
+
+.profile h3 {
+font-size: 16px;
+}
+
+.profile span {
+font-size: 12px;
+opacity: 0.8;
+}
+
+.menu-btn {
+border: none;
+background: transparent;
+color: white;
+
+
+font-size: 25px;
+
+cursor: pointer;
+
+
+}
+
+/* Messages Area */
+
+.messages {
+flex: 1;
+
+
+padding: 20px;
+
+overflow-y: auto;
+
+background: #efeae2;
+
+display: flex;
+flex-direction: column;
+gap: 12px;
+
+
+}
+
+/* Individual Message */
+
+.message {
+max-width: 75%;
+
+
+padding: 10px 12px;
+
+border-radius: 10px;
+
+font-size: 14px;
+
+line-height: 1.4;
+
+
+}
+
+.message p {
+margin-bottom: 4px;
+}
+
+.message span {
+display: block;
+
+
+font-size: 10px;
+
+color: #777;
+
+text-align: right;
+
+
+}
+
+/* Received Message */
+
+.received {
+align-self: flex-start;
+
+
+background: white;
+
+border-top-left-radius: 2px;
+
+
+}
+
+/* Sent Message */
+
+.sent {
+align-self: flex-end;
+
+
+background: #d9fdd3;
+
+border-top-right-radius: 2px;
+
+
+}
+/* Message Input */
+
+.message-form {
+    height: 65px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 10px;
+
+    background: #e5e7eb;
+}
+
+
+/* Input */
+
+.message-form input {
+    flex: 1;
+
+    height: 45px;
+
+    border: none;
+    outline: none;
+
+    padding: 12px 15px;
+
+    border-radius: 25px;
+
+    font-size: 16px;
+}
+
+
+/* Send Button */
+
+.message-form button {
+    width: 45px;
+    height: 45px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #075e54;
+    color: white;
+
+    font-size: 18px;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+}
+
+
+/* Hover */
+
+.message-form button:hover {
+    opacity: 0.85;
+}
+/* Mobile */
+
+@media (max-width: 500px) {
+
+
+body {
+    align-items: stretch;
+}
+
+.chat-container {
+    width: 100%;
+    height: 100vh;
+
+    border-radius: 0;
+}
+
+
+}
