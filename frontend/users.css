@@ -1,0 +1,118 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #d9dbd5;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Main WhatsApp-like container */
+.users-container {
+    width: 420px;
+    height: 650px;
+    background: #ffffff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.users-container h2 {
+    background: #075e54;
+    color: white;
+    padding: 20px;
+    font-size: 22px;
+    font-weight: 500;
+}
+
+/* User list */
+#userList {
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* Individual user */
+.user-item {
+    height: 72px;
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border-bottom: 1px solid #eeeeee;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+/* Hover */
+.user-item:hover {
+    background: #f0f2f5;
+}
+
+/* Avatar */
+.user-item::before {
+    content: "👤";
+    width: 50px;
+    height: 50px;
+    background: #dfe5e7;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+    margin-right: 15px;
+}
+
+/* User name */
+.user-name {
+    font-size: 17px;
+    color: #111b21;
+}
+
+/* Scrollbar */
+#userList::-webkit-scrollbar {
+    width: 6px;
+}
+
+#userList::-webkit-scrollbar-thumb {
+    background: #bdbdbd;
+    border-radius: 10px;
+}
+
+#userList::-webkit-scrollbar-track {
+    background: #f5f5f5;
+}
+
+/* Empty users message */
+#userList p {
+    text-align: center;
+    color: #667781;
+    padding: 30px;
+    font-size: 15px;
+}
+
+/* Mobile */
+@media (max-width: 500px) {
+
+    body {
+        background: white;
+    }
+
+    .users-container {
+        width: 100%;
+        height: 100vh;
+        box-shadow: none;
+    }
+
+    .users-container h2 {
+        padding: 18px;
+    }
+}
+
