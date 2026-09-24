@@ -1,74 +1,4 @@
 
-
-
-// ======================================
-// WebSocket Connection
-// ======================================
-
-const socket = new WebSocket("ws://localhost:3000");
-
-
-// WebSocket Connected
-socket.onopen = () => {
-
-    console.log("WebSocket connected");
-
-};
-
-
-// WebSocket Message Received
-socket.onmessage = async (event) => {
-
-    try {
-
-        // WebSocket data is coming as Blob
-        const text = await event.data.text();
-
-        console.log("Message received through WebSocket:", text);
-
-        // Show received message on screen
-        createMessage(
-            text,
-            new Date(),
-            "received"
-        );
-
-    } catch (error) {
-
-        console.log("WebSocket message error:", error);
-
-    }
-
-};
-
-
-// WebSocket Error
-socket.onerror = (error) => {
-
-    console.log("WebSocket error:", error);
-
-};
-
-
-// WebSocket Closed
-socket.onclose = () => {
-
-    console.log("WebSocket closed");
-
-};
-
-
-// ======================================
-// Get HTML Elements
-// ======================================
-
-const form = document.getElementById("messageForm");
-
-const input = document.getElementById("messageInput");
-
-const messages = document.getElementById("messages");
-
-
 // ======================================
 // Get User Information
 // ======================================
@@ -81,21 +11,36 @@ const selectedUserId = localStorage.getItem("selectedUserId");
 
 const selectedUserName = localStorage.getItem("selectedUserName");
 
+console.log("Logged-in User ID:", loggedInUserId);
 
-console.log(
-    "Logged-in User ID:",
-    loggedInUserId
-);
+console.log("Selected User ID:", selectedUserId);
 
-console.log(
-    "Selected User ID:",
-    selectedUserId
-);
+console.log("Selected User Name:", selectedUserName);
+// socket.io implementation
+const socket = io("http://localhost:3000");
+socket.on("connect", () => {
+  console.log("connected to the server");
 
-console.log(
-    "Selected User Name:",
-    selectedUserName
-);
+  socket.emit("register",loggedInUserId);
+});
+// receiving message from the server
+socket.on("message", (message) => {
+  console.log("message received ", message);
+
+  createMessage(message, new Date(), "received");
+  
+});
+
+// ======================================
+// Get HTML Elements
+// ======================================
+
+const form = document.getElementById("messageForm");
+
+const input = document.getElementById("messageInput");
+
+const messages = document.getElementById("messages");
+
 
 
 // ======================================
@@ -103,336 +48,195 @@ console.log(
 // ======================================
 
 if (!loggedInUserId) {
+  alert("User is not logged in.");
 
-    alert("User is not logged in.");
-
-    window.location.href = "login.html";
-
+  window.location.href = "login.html";
 }
-
 
 // ======================================
 // Check Selected User
 // ======================================
 
 if (!selectedUserId) {
+  alert("Please select a user first.");
 
-    alert("Please select a user first.");
-
-    window.location.href = "users.html";
-
+  window.location.href = "users.html";
 }
-
 
 // ======================================
 // Show Selected User Name
 // ======================================
 
-const chatUserName =
-    document.getElementById("chatUserName");
-
+const chatUserName = document.getElementById("chatUserName");
 
 if (chatUserName) {
-
-    chatUserName.textContent =
-        selectedUserName || "Unknown User";
-
+  chatUserName.textContent = selectedUserName || "Unknown User";
 }
-
 
 // ======================================
 // Get Previous Messages
 // ======================================
 
 async function getMessages() {
+  try {
+    const response = await axios.get(
+      `http://localhost:3000/api/GetMessages/${loggedInUserId}/${selectedUserId}`,
+    );
 
-    try {
+    console.log("GET MESSAGES:", response.data);
 
-        const response = await axios.get(
-            `http://localhost:3000/api/GetMessages/${loggedInUserId}/${selectedUserId}`
-        );
+    // Clear existing messages
+    messages.innerHTML = "";
 
+    // Display previous messages
+    response.data.forEach((data) => {
+      const message = document.createElement("div");
 
-        console.log(
-            "GET MESSAGES:",
-            response.data
-        );
+      // ======================================
+      // Check Sender
+      // ======================================
 
+      if (String(data.senderId) === String(loggedInUserId)) {
+        // Message sent by logged-in user
+        message.classList.add("message", "sent");
+      } else {
+        // Message received from selected user
+        message.classList.add("message", "received");
+      }
 
-        // Clear existing messages
-        messages.innerHTML = "";
+      // ======================================
+      // Message Time
+      // ======================================
 
+      const time = new Date(data.createdAt).toLocaleTimeString([], {
+        hour: "2-digit",
 
-        // Display previous messages
-        response.data.forEach(data => {
+        minute: "2-digit",
+      });
 
-            const message =
-                document.createElement("div");
+      // ======================================
+      // Message HTML
+      // ======================================
 
-
-            // ======================================
-            // Check Sender
-            // ======================================
-
-            if (
-                String(data.senderId) ===
-                String(loggedInUserId)
-            ) {
-
-                // Message sent by logged-in user
-                message.classList.add(
-                    "message",
-                    "sent"
-                );
-
-            } else {
-
-                // Message received from selected user
-                message.classList.add(
-                    "message",
-                    "received"
-                );
-
-            }
-
-
-            // ======================================
-            // Message Time
-            // ======================================
-
-            const time =
-                new Date(
-                    data.createdAt
-                ).toLocaleTimeString([], {
-
-                    hour: "2-digit",
-
-                    minute: "2-digit"
-
-                });
-
-
-            // ======================================
-            // Message HTML
-            // ======================================
-
-            message.innerHTML = `
+      message.innerHTML = `
                 <p>${data.messages}</p>
                 <span>${time}</span>
             `;
 
+      messages.appendChild(message);
+    });
 
-            messages.appendChild(message);
-
-        });
-
-
-        // Scroll to bottom
-        messages.scrollTop =
-            messages.scrollHeight;
-
-
-    } catch (error) {
-
-        console.log(
-            "GET MESSAGE ERROR:",
-            error.response?.data || error
-        );
-
-    }
-
+    // Scroll to bottom
+    messages.scrollTop = messages.scrollHeight;
+  } catch (error) {
+    console.log("GET MESSAGE ERROR:", error.response?.data || error);
+  }
 }
-
 
 // ======================================
 // Create Message On Screen
 // ======================================
 
-function createMessage(
-    text,
-    createdAt,
-    type
-) {
+function createMessage(text, createdAt, type) {
+  const message = document.createElement("div");
 
-    const message =
-        document.createElement("div");
+  message.classList.add("message", type);
 
+  // ======================================
+  // Message Time
+  // ======================================
 
-    message.classList.add(
-        "message",
-        type
-    );
+  const time = new Date(createdAt).toLocaleTimeString([], {
+    hour: "2-digit",
 
+    minute: "2-digit",
+  });
 
-    // ======================================
-    // Message Time
-    // ======================================
+  // ======================================
+  // Message HTML
+  // ======================================
 
-    const time =
-        new Date(
-            createdAt
-        ).toLocaleTimeString([], {
-
-            hour: "2-digit",
-
-            minute: "2-digit"
-
-        });
-
-
-    // ======================================
-    // Message HTML
-    // ======================================
-
-    message.innerHTML = `
+  message.innerHTML = `
         <p>${text}</p>
         <span>${time}</span>
     `;
 
+  messages.appendChild(message);
 
-    messages.appendChild(message);
-
-
-    // Scroll to bottom
-    messages.scrollTop =
-        messages.scrollHeight;
-
+  // Scroll to bottom
+  messages.scrollTop = messages.scrollHeight;
 }
-
 
 // ======================================
 // Send Message
 // ======================================
 
-form.addEventListener(
-    "submit",
-    async function (event) {
+form.addEventListener("submit", async function (event) {
+  event.preventDefault();
 
-        event.preventDefault();
+  // Get input value
+  const text = input.value.trim();
 
+  // Don't send empty message
+  if (text === "") {
+    return;
+  }
 
-        // Get input value
-        const text =
-            input.value.trim();
+  console.log("Sending message:", text);
 
+  console.log("Sender ID:", loggedInUserId);
 
-        // Don't send empty message
-        if (text === "") {
+  console.log("Receiver ID:", selectedUserId);
 
-            return;
+  try {
+    // ======================================
+    // 1. Save Message In Database
+    // ======================================
 
-        }
+    const response = await axios.post("http://localhost:3000/api/addMessage", {
+      senderId: Number(loggedInUserId),
 
+      receiverId: Number(selectedUserId),
 
-        console.log(
-            "Sending message:",
-            text
-        );
+      messages: text,
+    });
 
-        console.log(
-            "Sender ID:",
-            loggedInUserId
-        );
-
-        console.log(
-            "Receiver ID:",
-            selectedUserId
-        );
+    console.log("SEND MESSAGE RESPONSE:", response.data);
 
 
-        try {
+    //======================================
+     // 2. Send Message Through Socket.io
+     // ======================================
 
-            // ======================================
-            // 1. Save Message In Database
-            // ======================================
+    socket.emit("message", {
+      senderId: Number(loggedInUserId),
 
-            const response =
-                await axios.post(
-                    "http://localhost:3000/api/addMessage",
-                    {
+      receiverId: Number(selectedUserId),
 
-                        senderId:
-                            Number(loggedInUserId),
+      text: text
+    });
 
-                        receiverId:
-                            Number(selectedUserId),
+    // ======================================
+    // 3. Show Message On Sender Screen
+    // ======================================
 
-                        messages:
-                            text
+    createMessage(text, new Date(), "sent");
 
-                    }
-                );
+    // ======================================
+    // 4. Clear Input
+    // ======================================
 
+    input.value = "";
 
-            console.log(
-                "SEND MESSAGE RESPONSE:",
-                response.data
-            );
+    // ======================================
+    // 5. Focus Input
+    // ======================================
 
-
-            // ======================================
-            // 2. Send Message Through WebSocket
-            // ======================================
-
-            if (
-                socket.readyState ===
-                WebSocket.OPEN
-            ) {
-
-                socket.send(text);
-
-
-                console.log(
-                    "Message sent through WebSocket:",
-                    text
-                );
-
-            } else {
-
-                console.log(
-                    "WebSocket is not open"
-                );
-
-            }
-
-
-            // ======================================
-            // 3. Show Message On Sender Screen
-            // ======================================
-
-            createMessage(
-                text,
-                new Date(),
-                "sent"
-            );
-
-
-            // ======================================
-            // 4. Clear Input
-            // ======================================
-
-            input.value = "";
-
-
-            // ======================================
-            // 5. Focus Input
-            // ======================================
-
-            input.focus();
-
-
-        } catch (error) {
-
-            console.log(
-                "SEND MESSAGE ERROR:",
-                error.response?.data || error
-            );
-
-        }
-
-    }
-);
-
+    input.focus();
+  } catch (error) {
+    console.log("SEND MESSAGE ERROR:", error.response?.data || error);
+  }
+});
 
 // ======================================
 // Load Previous Messages
